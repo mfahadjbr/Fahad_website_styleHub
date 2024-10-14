@@ -1,11 +1,12 @@
-"use client";
+"use client"; // Ensure this is a client component
 
+import { Suspense } from 'react';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductGrid from '@/components/ui/ProductGrid';
 import { products } from '@/lib/data';
+import LoadingSpinner from '@/components/ui/LoadingSpinner'; // A spinner component during loading
 
-// Define the Product type based on your product structure
 type Product = {
   id: number;
   name: string;
@@ -14,10 +15,10 @@ type Product = {
   category: string;
 };
 
-export default function SearchPage() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [searchResults, setSearchResults] = useState<Product[]>([]); // Explicitly typing the state
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
 
   useEffect(() => {
     const results = products.filter(product =>
@@ -35,5 +36,13 @@ export default function SearchPage() {
         <p>No products found.</p>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <SearchResults />
+    </Suspense>
   );
 }
